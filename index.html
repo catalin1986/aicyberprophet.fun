@@ -5,21 +5,9 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AiCyberProphet</title>
-
-    <!-- Google Consent Mode v2 (Placeholder) -->
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('consent', 'default', {
-        'ad_storage': 'denied',
-        'ad_user_data': 'denied',
-        'ad_personalization': 'denied',
-        'analytics_storage': 'denied'
-      });
-    </script>
-    <!-- Google AdSense / CMP (Replace ca-pub-XXXXXXXXXXXXXXXX with your ID) -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
-
+    <meta name="google-adsense-account" content="ca-pub-8550835616344745">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8550835616344745" crossorigin="anonymous"></script>
+    <script async custom-element="amp-auto-ads" src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js"></script>
     <script type="module">
       if (import.meta.hot?.on) {
         import.meta.hot.on('vite:error', (error) => {
@@ -33,7 +21,23 @@
     </script>
   </head>
   <body>
+    <amp-auto-ads type="adsense" data-ad-client="ca-pub-8550835616344745"></amp-auto-ads>
     <div id="root"></div>
+    
+    <!-- Hidden Privacy Policy Section for Google Crawler -->
+    <div id="privacy-policy-content" style="display:none;">
+        <h1>Privacy Policy</h1>
+        <p>Last updated: 2024</p>
+        <h2>1. Introduction</h2>
+        <p>Welcome to AiCyberProphet ("we," "our," or "us"). We respect your privacy and are committed to protecting your personal data.</p>
+        <h2>2. Data We Collect</h2>
+        <p>We may collect Technical Data (IP, browser info), Usage Data, and Blockchain Data (public wallet addresses).</p>
+        <h2>3. Cookies and Advertising</h2>
+        <p>We use Google AdSense to display advertisements. Google uses cookies to serve ads based on your prior visits.</p>
+        <h2>4. Contact Us</h2>
+        <p>If you have any questions, please contact us via our social media channels.</p>
+    </div>
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

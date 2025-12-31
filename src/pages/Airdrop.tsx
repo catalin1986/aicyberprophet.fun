@@ -8,6 +8,7 @@ import { transferTokens, findAssociatedTokenPda, transferSol } from '@metaplex-f
 import { transactionBuilder, sol, publicKey } from '@metaplex-foundation/umi';
 import { toast } from 'react-hot-toast';
 import { cn } from '@/lib/utils';
+import { SEO } from '@/components/SEO';
 
 const TREASURY_WALLET = publicKey('EXNRn8TeUeVRvzAN9cztG6h1c6yjyDb85MD1KiJ7p4aK');
 const SERVICE_FEE_PER_ADDRESS = 0.001;
@@ -137,11 +138,21 @@ const AirdropWithLogic: FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 py-8">
-      <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">Airdrop Tool</h1>
-        <p className="text-muted-foreground">
+      <SEO 
+        title="Solana Token Airdrop Tool | Multisender"
+        description="Send SPL tokens to multiple addresses in one transaction. The cheapest and fastest Solana Airdrop tool."
+        keywords="solana airdrop tool, token multisender, spl token airdrop, bulk token transfer"
+      />
+
+      <div className="space-y-2 text-center">
+        <h1 className="text-4xl font-extrabold tracking-tight mb-2">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-primary to-purple-500">
+             Solana Token Airdrop
+          </span>
+        </h1>
+        <p className="text-muted-foreground max-w-2xl mx-auto">
           Distribute tokens to multiple wallets in a single transaction. 
-          <span className="text-primary ml-1 text-sm bg-primary/10 px-2 py-0.5 rounded">Fee: 0.001 SOL / address</span>
+          <span className="text-primary ml-1 text-sm bg-primary/10 px-2 py-0.5 rounded border border-primary/20">Fee: 0.001 SOL / address</span>
         </p>
       </div>
 

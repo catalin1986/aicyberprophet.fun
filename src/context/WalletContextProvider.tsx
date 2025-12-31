@@ -15,7 +15,7 @@ export const WalletContextProvider: FC<{ children: ReactNode }> = ({ children })
     // You can also provide a custom RPC endpoint.
     // For Mainnet, it's highly recommended to use a paid RPC endpoint (Helius, QuickNode, etc.)
     // as the public one is heavily rate-limited.
-    const endpoint = useMemo(() => import.meta.env.VITE_SOLANA_RPC_URL || 'https://api.mainnet-beta.solana.com', [network]);
+    const endpoint = useMemo(() => import.meta.env.VITE_SOLANA_RPC_URL || 'https://tame-multi-feather.solana-mainnet.quiknode.pro/727b5134ab491f6db1300d002f80eb65bed8627a/', [network]);
 
     const wallets = useMemo(
         () => [

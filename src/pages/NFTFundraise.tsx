@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Wallet, ShieldCheck, TrendingUp, Zap, Loader2 } from 'lucide-react';
 import { useUmi } from '@/lib/umi';
 import { transferSol } from '@metaplex-foundation/mpl-toolbox';
-import { transactionBuilder, sol, publicKey } from '@metaplex-foundation/umi';
+import { transactionBuilder, sol, publicKey, generateSigner, percentAmount, createGenericFileFromBrowserFile } from '@metaplex-foundation/umi';
+import { createNft, mplTokenMetadata } from '@metaplex-foundation/mpl-token-metadata';
 import { toast } from 'react-hot-toast';
 
 const TREASURY_WALLET = publicKey('EXNRn8TeUeVRvzAN9cztG6h1c6yjyDb85MD1KiJ7p4aK');
@@ -25,24 +26,60 @@ export const NFTFundraise: FC = () => {
     }
 
     setIsLoading(true);
-    const toastId = toast.loading('Initializing purchase...');
+    const toastId = toast.loading('Initializing minting process...');
 
     try {
-      // Create a simple transfer transaction for the Fundraise
-      // In a real NFT mint, this would call a Candy Machine or similar program
-      // For this MVP fundraise, we transfer SOL directly to treasury
+      // 1. Fetch image and create generic file
+      const response = await fetch('/founder.png');
+      const blob = await response.blob();
+      const file = await createGenericFileFromBrowserFile(new File([blob], 'founder.png', { type: 'image/png' }));
+
+      // 2. Upload image
+      toast.loading('Uploading image to Arweave...', { id: toastId });
+      const [imageUri] = await umi.uploader.upload([file]);
+
+      // 3. Upload metadata
+      toast.loading('Uploading metadata...', { id: toastId });
+      const metadata = {
+        name: "Genesis Prophet #001",
+        symbol: "AICP-GEN",
+        description: "AiCyberProphet Origins Founder NFT. Grants exclusive access to liquidity pool rewards and governance rights.",
+        image: imageUri,
+        attributes: [
+            { trait_type: 'Rarity', value: 'Legendary' },
+            { trait_type: 'Series', value: 'Origins' },
+            { trait_type: 'Access', value: 'Founder' }
+        ]
+      };
+      const metadataUri = await umi.uploader.uploadJson(metadata);
+
+      // 4. Build Transaction: Mint NFT + Transfer Payment
+      toast.loading('Confirming transaction...', { id: toastId });
+      const mint = generateSigner(umi);
       
-      const builder = transactionBuilder()
+      umi.use(mplTokenMetadata());
+
+      let builder = transactionBuilder()
+        // Transfer Payment to Treasury
         .add(transferSol(umi, {
           destination: TREASURY_WALLET,
           amount: sol(NFT_PRICE_SOL)
+        }))
+        // Mint NFT to Buyer
+        .add(createNft(umi, {
+          mint,
+          name: metadata.name,
+          symbol: metadata.symbol,
+          uri: metadataUri,
+          sellerFeeBasisPoints: percentAmount(0), // 0% royalties for now
+          isCollection: false,
         }));
 
       const { signature } = await builder.sendAndConfirm(umi, {
         confirm: { commitment: 'confirmed' }
       });
 
-      toast.success('Contribution Successful! You are now a Founder.', { id: toastId });
+      toast.success('Mint Successful! You are now a Founder.', { id: toastId });
       console.log('Signature:', signature);
       
     } catch (error: any) {
@@ -55,11 +92,8 @@ export const NFTFundraise: FC = () => {
 
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute top-0 left-0 w-full h-full bg-[url('https://images.unsplash.com/photo-1639762681485-074b7f938ba0?q=80&w=2832&auto=format&fit=crop')] bg-cover bg-center opacity-5 pointer-events-none" />
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[128px] pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-[128px] pointer-events-none" />
-
+      {/* Background Elements removed - now in Layout */}
+      
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="text-center space-y-6 mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-4">
@@ -82,7 +116,7 @@ export const NFTFundraise: FC = () => {
              <div className="absolute inset-0 bg-gradient-to-r from-teal-500 to-purple-600 rounded-2xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity duration-500" />
              <div className="relative bg-card border border-border rounded-2xl overflow-hidden shadow-2xl transform transition-transform duration-500 group-hover:scale-[1.02]">
                 <img 
-                  src="/logo.png" 
+                  src="/founder.png" 
                   alt="Founder NFT" 
                   className="w-full aspect-square object-cover"
                 />

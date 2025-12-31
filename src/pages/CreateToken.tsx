@@ -4,8 +4,10 @@ import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { toast } from 'react-hot-toast';
-import { useTokenFactory, TokenFormData } from '@/hooks/useTokenFactory';
 import { useSearchParams } from 'react-router-dom';
+import { useTokenFactory, TokenFormData } from '@/hooks/useTokenFactory';
+import { SuccessModal } from '@/components/SuccessModal';
+import { SEO } from '@/components/SEO';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -40,6 +42,13 @@ export const CreateToken: FC = () => {
   const [showSocialLinks, setShowSocialLinks] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  const [createdToken, setCreatedToken] = useState<{
+    name: string;
+    symbol: string;
+    mint: string;
+    image: string | null;
+  } | null>(null);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -113,7 +122,12 @@ export const CreateToken: FC = () => {
     try {
       const result = await createToken(formData);
       toast.success(`Token Created! Address: ${result?.mint}`, { id: toastId });
-      // You can redirect to dashboard or show a success modal here
+      setCreatedToken({
+        name: formData.name,
+        symbol: formData.symbol,
+        mint: result?.mint,
+        image: formData.previewUrl,
+      });
     } catch (err: any) {
       toast.error(err.message || 'Failed to create token', { id: toastId });
     }
@@ -121,18 +135,21 @@ export const CreateToken: FC = () => {
 
 
   return (
-    <div className="min-h-screen bg-background bg-grid-pattern relative flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8">
-      {/* Background Gradient Effect */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-96 bg-primary/20 blur-[120px] rounded-full pointer-events-none" />
+    <div className="min-h-screen relative flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8">
+      <SEO 
+        title="Create Solana Token | SPL Token Creator"
+        description="Launch your own Solana SPL Token in less than 1 minute. No coding required. Supports revoking mint/freeze authority."
+        keywords="create solana token, spl token generator, solana token creator, no code token launch"
+      />
 
       {/* Header */}
       <div className="text-center mb-12 relative z-10">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/50 border border-border/50 text-xs font-medium mb-4 backdrop-blur-sm">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-medium mb-4 backdrop-blur-sm">
           <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
           Base fee: 2 AICP + 1 AICP per Authority
         </div>
         <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-600">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-primary to-purple-500">
             Create Your Solana Token
           </span>
         </h1>
@@ -171,6 +188,18 @@ export const CreateToken: FC = () => {
 
       {/* Main Card */}
       <div className="w-full max-w-2xl bg-card/50 backdrop-blur-xl border border-border rounded-2xl shadow-2xl overflow-hidden relative z-10">
+        {createdToken && (
+          <SuccessModal
+            isOpen={true}
+            onClose={() => setCreatedToken(null)}
+            tokenData={{
+                name: createdToken.name,
+                symbol: createdToken.symbol,
+                mint: createdToken.mint,
+                image: createdToken.image
+            }}
+          />
+        )}
         {step === 1 && (
           <div className="p-8 space-y-8">
             <div className="space-y-4">

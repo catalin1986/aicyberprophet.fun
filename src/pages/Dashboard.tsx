@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { useUserTokens } from '@/hooks/useUserTokens';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { Loader2, Plus, ExternalLink, Shield, ShieldAlert, ShieldCheck, Copy } from 'lucide-react';
+import { Loader2, Plus, ExternalLink, Shield, ShieldAlert, ShieldCheck, Copy, CheckCircle2, Circle, Trophy, Award, Crown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 
@@ -12,6 +12,12 @@ export const Dashboard: FC = () => {
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     toast.success('Address copied!');
+  };
+
+  const getDeveloperRank = (count: number) => {
+    if (count >= 5) return { title: 'Certified Prophet', icon: Crown, color: 'text-yellow-500', bg: 'bg-yellow-500/10', border: 'border-yellow-500/50' };
+    if (count >= 3) return { title: 'Adept Prophet', icon: Award, color: 'text-purple-500', bg: 'bg-purple-500/10', border: 'border-purple-500/50' };
+    return { title: 'Novice Prophet', icon: Trophy, color: 'text-blue-500', bg: 'bg-blue-500/10', border: 'border-blue-500/50' };
   };
 
   if (!connected) {
@@ -28,23 +34,47 @@ export const Dashboard: FC = () => {
     );
   }
 
+  const rank = getDeveloperRank(tokens.length);
+  const RankIcon = rank.icon;
+
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-8">
         
-        {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
+        {/* Header & Developer Status */}
+        <div className="grid md:grid-cols-3 gap-6">
+          <div className="md:col-span-2 space-y-2">
             <h1 className="text-3xl font-bold tracking-tight mb-2">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-600">
-                Your Token Portfolio
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-primary to-purple-500">
+                Prophet Dashboard
               </span>
             </h1>
             <p className="text-muted-foreground">
               Manage and track all your created tokens in one place.
             </p>
           </div>
-          <Link 
+          
+          <div className={`p-4 rounded-xl border ${rank.border} ${rank.bg} flex items-center gap-4`}>
+            <div className={`p-3 rounded-full ${rank.bg} border ${rank.border}`}>
+              <RankIcon className={`w-8 h-8 ${rank.color}`} />
+            </div>
+            <div>
+              <div className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Developer Status</div>
+              <div className={`text-xl font-bold ${rank.color}`}>{rank.title}</div>
+              <div className="text-xs text-muted-foreground mt-1">{tokens.length} Projects Launched</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 border-b border-border/50 pb-8">
+           <div className="flex gap-4">
+              <div className="flex items-center gap-2">
+                 <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse" />
+                 <span className="text-sm font-medium text-muted-foreground">Solana Network: <span className="text-green-500">Operational</span></span>
+              </div>
+           </div>
+           
+           <Link 
             to="/create" 
             className="px-6 py-2.5 bg-primary hover:bg-primary/90 text-white font-semibold rounded-lg shadow-lg shadow-primary/20 transition-all active:scale-95 flex items-center gap-2"
           >
@@ -84,7 +114,7 @@ export const Dashboard: FC = () => {
             {tokens.map((token) => (
               <div 
                 key={token.id}
-                className="group bg-card/50 backdrop-blur-md border border-border/50 hover:border-primary/50 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-[0_0_20px_rgba(16,185,129,0.1)]"
+                className="group bg-card/50 backdrop-blur-md border border-border/50 hover:border-primary/50 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-[0_0_20px_rgba(16,185,129,0.1)] flex flex-col"
               >
                 {/* Token Header */}
                 <div className="p-6 border-b border-border/50 relative">
@@ -135,7 +165,7 @@ export const Dashboard: FC = () => {
                 </div>
 
                 {/* Token Details */}
-                <div className="p-6 space-y-4 bg-secondary/5">
+                <div className="p-6 space-y-6 bg-secondary/5 flex-grow">
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
                       <div className="text-muted-foreground text-xs mb-1">Supply</div>
@@ -164,6 +194,41 @@ export const Dashboard: FC = () => {
                         <span className="text-[10px] font-medium">Update</span>
                       </div>
                     </div>
+                  </div>
+                  
+                  {/* Launch Checklist */}
+                  <div className="bg-black/20 rounded-xl p-4 border border-zinc-800/50 space-y-3">
+                    <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-2 flex items-center justify-between">
+                      <span>Launch Checklist</span>
+                      <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full">Step 1/4</span>
+                    </h4>
+                    
+                    <div className="flex items-center gap-3 text-sm text-green-400 bg-green-500/5 p-2 rounded-lg border border-green-500/10">
+                      <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+                      <span className="font-medium">1. Token Created</span>
+                    </div>
+
+                    <Link to="/create-market" className="flex items-center gap-3 text-sm text-zinc-300 hover:text-white group/item transition-all p-2 rounded-lg hover:bg-white/5 border border-transparent hover:border-white/10">
+                      <div className="w-4 h-4 rounded-full border-2 border-zinc-600 group-hover/item:border-orange-500 flex items-center justify-center">
+                        <div className="w-2 h-2 rounded-full bg-transparent group-hover/item:bg-orange-500 transition-colors" />
+                      </div>
+                      <span className="flex-1">2. Create Market ID</span>
+                      <span className="text-[10px] bg-orange-500/20 text-orange-400 px-1.5 py-0.5 rounded whitespace-nowrap">Save 2 SOL</span>
+                    </Link>
+
+                    <Link to="/create-liquidity" className="flex items-center gap-3 text-sm text-zinc-300 hover:text-white group/item transition-all p-2 rounded-lg hover:bg-white/5 border border-transparent hover:border-white/10">
+                      <div className="w-4 h-4 rounded-full border-2 border-zinc-600 group-hover/item:border-blue-500 flex items-center justify-center">
+                         <div className="w-2 h-2 rounded-full bg-transparent group-hover/item:bg-blue-500 transition-colors" />
+                      </div>
+                      <span>3. Add Liquidity</span>
+                    </Link>
+
+                    <a href={`https://dexscreener.com/solana/${token.address}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-zinc-300 hover:text-white group/item transition-all p-2 rounded-lg hover:bg-white/5 border border-transparent hover:border-white/10">
+                      <div className="w-4 h-4 rounded-full border-2 border-zinc-600 group-hover/item:border-purple-500 flex items-center justify-center">
+                         <div className="w-2 h-2 rounded-full bg-transparent group-hover/item:bg-purple-500 transition-colors" />
+                      </div>
+                      <span>4. Verify on Dexscreener</span>
+                    </a>
                   </div>
                 </div>
               </div>
