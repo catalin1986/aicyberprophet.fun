@@ -8,6 +8,7 @@ import { Airdrop } from './pages/Airdrop';
 import { Explore } from './pages/Explore';
 import { NFTFundraise } from './pages/NFTFundraise';
 import { Affiliate } from './pages/Affiliate';
+import { PrivacyPolicy } from './pages/PrivacyPolicy';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
             <Route path="/explore" element={<Explore />} />
             <Route path="/fundraise" element={<NFTFundraise />} />
             <Route path="/affiliate" element={<Affiliate />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           </Routes>
         </Layout>
       </Router>
