@@ -12,6 +12,7 @@ import { Explore } from './pages/Explore';
 import { NFTFundraise } from './pages/NFTFundraise';
 import { Affiliate } from './pages/Affiliate';
 import { TokenProfile } from './pages/TokenProfile';
+import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { TermsOfService } from './pages/TermsOfService';
 import AboutUs from './pages/AboutUs';
 import Contact from './pages/Contact';
@@ -51,6 +52,7 @@ function App() {
               <Route path="/fundraise" element={<NFTFundraise />} />
               <Route path="/affiliate" element={<Affiliate />} />
               <Route path="/token/:mintAddress" element={<TokenProfile />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="/terms" element={<TermsOfService />} />
               <Route path="/about" element={<AboutUs />} />
               <Route path="/contact" element={<Contact />} />
